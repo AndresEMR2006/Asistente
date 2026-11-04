@@ -89,6 +89,5 @@ class SystemTray:
 
         print("[SYSTEM TRAY] Cerrando Kusare...")
 
-        self.assistant.stop()
         self.tray.hide()
         self.app.quit()
