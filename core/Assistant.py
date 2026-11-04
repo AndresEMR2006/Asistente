@@ -14,6 +14,14 @@ class Assistant:
 
         print("[ASSISTANT] Asistente inicializado correctamente. \n")
 
+    def start(self):
+        self.running = True
+        print("[ASSISTANT] Asistente iniciado. \n")
+
+    def procces_command(self, user_input):
+        command = self.command_proccesor.process_command(user_input)
+        self.module_manager.manage(command)
+
     def run(self):
         self.running = True
 
@@ -24,8 +32,9 @@ class Assistant:
                 self.stop()
                 continue
 
-            command = self.command_proccesor.process_command(user_input)
-            self.module_manager.manage(command)
+            self.procces_command(user_input)
+
+            
 
     def stop(self):
         self.running = False
