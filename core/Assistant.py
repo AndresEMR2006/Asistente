@@ -18,7 +18,7 @@ class Assistant:
         self.running = True
         print("[ASSISTANT] Asistente iniciado. \n")
 
-    def procces_command(self, user_input):
+    def process_command(self, user_input):
         command = self.command_proccesor.process_command(user_input)
         self.module_manager.manage(command)
 
