@@ -4,10 +4,13 @@ from PySide6.QtWidgets import (QSystemTrayIcon, QMenu, QApplication)
 
 from PySide6.QtGui import QIcon
 
+from integrations.windows.StartupManager import StartupManager
+
 class SystemTray:
 
     def __init__(self, assistant, app):
 
+        self.startup_manager = StartupManager()
         self.assistant = assistant
         self.app = app
 
@@ -35,13 +38,26 @@ class SystemTray:
 
         menu = QMenu()
 
-        status_action = menu.addAction("Kusare esta ejecutandose")
+        status_action = menu.addAction("Kusare está ejecutándose")
         status_action.setEnabled(False)
 
-        menu.addSeparator
+        menu.addSeparator()
 
         notification_action = menu.addAction("Acerca de Kusare")
         notification_action.triggered.connect(self.show_about)
+
+        menu.addSeparator()
+
+        startup_action = menu.addAction("Iniciar con Windows")
+        startup_action.setCheckable(True)
+
+        startup_action.setChecked(
+            self.startup_manager.is_enabled()
+        )
+
+        startup_action.triggered.connect(
+            self.toggle_startup
+        )
 
         menu.addSeparator()
 
@@ -49,6 +65,16 @@ class SystemTray:
         exit_action.triggered.connect(self.exit_application)
 
         self.tray.setContextMenu(menu)
+
+    def toggle_startup(self, checked):
+
+        if checked:
+            self.startup_manager.enable()
+            print("[SYSTEM TRAY] Inicio automático habilitado.")
+
+        else:
+            self.startup_manager.disable()
+            print("[SYSTEM TRAY] Inicio automático deshabilitado.")
 
     def show_about(self):
 
