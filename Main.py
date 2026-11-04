@@ -7,6 +7,8 @@ from core.InteractionManager import InteractionManager
 
 from integrations.windows.SystemTray import SystemTray
 from integrations.windows.GlobalShortcuts import GlobalShortcuts
+from integrations.voice.PushToTalk import PushToTalk
+from integrations.voice.FasterWhisperTranscriber import FasterWhisperTranscriber
 
 from interfaces.text.TextInput import TextInput
 
@@ -23,6 +25,14 @@ def main():
     # Inicialización de interacciones
     interaction_manager = InteractionManager(assistant)
 
+    # Inicialización de reconocimiento de voz
+    transcriber = FasterWhisperTranscriber()
+
+    push_to_talk = PushToTalk(
+        transcriber=transcriber,
+        on_transcription=interaction_manager.process_text
+    )
+
     # Inicialización de interfaces
     text_input = TextInput(interaction_manager)
     interaction_manager.open_text_input.connect(text_input.open)
@@ -32,7 +42,8 @@ def main():
 
     shortcuts = GlobalShortcuts(
         on_text_input=interaction_manager.request_text_input,
-        on_voice_toggle=interaction_manager.request_voice_toggle
+        on_voice_press=push_to_talk.start_recording,
+        on_voice_release=push_to_talk.stop_recording
     )
 
     shortcuts.start()
